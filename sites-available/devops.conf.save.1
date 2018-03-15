@@ -1,0 +1,38 @@
+server {
+
+#cadvisor
+  listen 8081 default_server;
+
+
+  location  /monitoring {
+ 
+   proxy_set_header    Host $http_host;
+   proxy_set_header    X-Forwarded-Host $host/monitoring;
+  #proxy_set_header    X-Forwarded-Server $host;
+   proxy_set_header    X-Forwarded-For $proxy_add_x_forwarded_for;
+   rewrite ^/monitoring/(.*) /$1 break;
+   proxy_pass          http://131.234.28.87:8080;
+
+  }
+
+}
+
+server {
+# The IP that you forwarded in your router (nginx proxy)
+  listen 80 default_server;
+
+# Make site accessible from http://localhost/
+  server_name logging.devops-hip.cs.upb.de;
+
+#Graylog configuration
+
+ location \monitoring {
+
+    proxy_set_header    Host $http_host;
+    proxy_set_header    X-Forwarded-Host $host;
+    proxy_set_header    X-Forwarded-Server $host;
+    proxy_set_header    X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_pass          http://131.234.28.87:9000;
+
+   }
+}
