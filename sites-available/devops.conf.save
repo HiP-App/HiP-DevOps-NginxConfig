@@ -1,0 +1,29 @@
+server {
+# The IP that you forwarded in your router (nginx proxy)
+  listen 80 default_server;
+
+# Make site accessible from http://localhost/
+  server_name graylog.yallalabs.local;
+
+#Graylog
+ location / {
+ 
+   proxy_set_header    Host $http_host;
+   proxy_set_header    X-Forwarded-Host $host;
+   proxy_set_header    X-Forwarded-Server $host;
+   proxy_set_header    X-Forwarded-For $proxy_add_x_forwarded_for;
+  #proxy_set_header    X-Graylog-Server-URL http://131.234.28.87:9000/api;
+   proxy_pass          http://131.234.28.87:9000;
+
+ }
+
+#Cadvisor
+ location /Monitoring {
+
+ proxy_set_header	Host $http_host;
+ proxy_set_header    X-Forwarded-Host $host;
+ proxy_set_header    X-Forwarded-Server $host;
+ proxy_set_header    X-Forwarded-For $proxy_add_x_forwarded_for;
+
+ }
+}
